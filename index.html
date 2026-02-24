@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>École Suger — Redirection</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; background: #f0f2f5; color: #333;
+        }
+        .card {
+            text-align: center; padding: 48px 40px;
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            max-width: 440px; width: 90%;
+        }
+        .logo { font-size: 48px; margin-bottom: 16px; }
+        h1 { font-size: 20px; font-weight: 600; margin-bottom: 8px; color: #1a1a2e; }
+        .spinner {
+            width: 36px; height: 36px; margin: 20px auto;
+            border: 3px solid #e8e8e8; border-top: 3px solid #0078d4;
+            border-radius: 50%; animation: spin .8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .status { color: #666; font-size: 14px; margin-bottom: 20px; }
+        .fallback {
+            display: inline-block; padding: 12px 28px; margin-top: 8px;
+            background: #0078d4; color: #fff; text-decoration: none;
+            border-radius: 8px; font-weight: 600; font-size: 14px;
+            transition: background .2s;
+        }
+        .fallback:hover { background: #106ebe; }
+        .dest { color: #999; font-size: 12px; margin-top: 20px; word-break: break-all; }
+        .error { display: none; color: #c0392b; margin-top: 16px; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">🏫</div>
+        <h1 id="title">Ouverture dans Microsoft Edge…</h1>
+        <div class="spinner" id="spinner"></div>
+        <p class="status" id="status">Redirection en cours</p>
+        <a class="fallback" id="fallback" href="#" style="display:none">
+            Ouvrir dans Edge
+        </a>
+        <p class="dest" id="dest"></p>
+        <p class="error" id="error">
+            ⚠ La redirection automatique n'a pas fonctionné.<br>
+            Cliquez le bouton ci-dessus.
+        </p>
+    </div>
+
+    <script>
+    // ══════════════════════════════════════════════════════════
+    //  TABLE DES APPLICATIONS — Ajoutez vos liens ici
+    // ══════════════════════════════════════════════════════════
+    const APPS = {
+        "silae":    "https://sadec-akelys.silae.fr/silae",
+        "admin":    "https://admin.google.com",
+        // Ajoutez d'autres entrées :
+        // "pronote": "https://votre-instance.pronote.fr",
+        // "ent":     "https://ent.iledefrance.fr",
+    };
+
+    const DEFAULT_APP = "silae";
+
+    // ── Lire le paramètre ?app=xxx depuis l'URL ──
+    const params = new URLSearchParams(window.location.search);
+    const appName = (params.get("app") || DEFAULT_APP).toLowerCase();
+    const directUrl = params.get("url");
+
+    // Déterminer l'URL cible
+    const targetUrl = directUrl || APPS[appName] || APPS[DEFAULT_APP];
+    const edgeUrl = "microsoft-edge:" + targetUrl;
+
+    // Afficher la destination
+    document.getElementById("dest").textContent = targetUrl;
+    document.getElementById("fallback").href = edgeUrl;
+
+    // Tenter la redirection automatique
+    try {
+        window.location.href = edgeUrl;
+
+        // Si après 3s on est toujours là → afficher le bouton fallback
+        setTimeout(function() {
+            document.getElementById("spinner").style.display = "none";
+            document.getElementById("status").style.display = "none";
+            document.getElementById("fallback").style.display = "inline-block";
+            document.getElementById("error").style.display = "block";
+        }, 3000);
+    } catch(e) {
+        document.getElementById("spinner").style.display = "none";
+        document.getElementById("fallback").style.display = "inline-block";
+        document.getElementById("error").style.display = "block";
+    }
+    </script>
+</body>
+</html>
