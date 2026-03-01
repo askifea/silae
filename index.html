@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>École Suger — Redirection</title>
+    <title>Silae Groupe IFEA</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -83,6 +83,9 @@
     // Tenter la redirection automatique
     try {
         window.location.href = edgeUrl;
+
+        // Fermer l'onglet automatiquement après la redirection
+        setTimeout(function() { window.close(); }, 500);
 
         // Si après 3s on est toujours là → afficher le bouton fallback
         setTimeout(function() {
