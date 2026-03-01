@@ -30,16 +30,20 @@ reg add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v "InternetExplorerIntegrationS
 echo     OK
 
 echo [3/4] Creation du raccourci bureau...
-set "SHORTCUT=%PUBLIC%\Desktop\Silae.lnk"
 set "EDGE=%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe"
 if not exist "%EDGE%" set "EDGE=%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"
 
-powershell -NoProfile -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut('%SHORTCUT%'); $s.TargetPath = '%EDGE%'; $s.Arguments = 'https://askifea.github.io/silae'; $s.IconLocation = '%EDGE%,0'; $s.Description = 'Silae Groupe IFEA'; $s.Save()"
+powershell -NoProfile -Command "$ws = New-Object -ComObject WScript.Shell; $url = 'https://sadec-akelys.silae.fr/silae'; $edge = '%EDGE%'; $icon = $edge + ',0'; foreach ($p in @('%PUBLIC%\Desktop\Silae.lnk', '%USERPROFILE%\Desktop\Silae.lnk')) { $s = $ws.CreateShortcut($p); $s.TargetPath = $edge; $s.Arguments = $url; $s.IconLocation = $icon; $s.Description = 'Silae Groupe IFEA'; $s.Save() }"
 
-if exist "%SHORTCUT%" (
-    echo     OK - Raccourci cree sur le bureau de tous les utilisateurs
+set "FOUND=0"
+if exist "%PUBLIC%\Desktop\Silae.lnk"      set "FOUND=1"
+if exist "%USERPROFILE%\Desktop\Silae.lnk" set "FOUND=1"
+
+if "%FOUND%"=="1" (
+    echo     OK - Raccourci cree sur le bureau
 ) else (
     echo     ATTENTION - Echec creation raccourci
+    echo     Edge detecte : %EDGE%
 )
 
 echo [4/4] Application des politiques...

@@ -87,15 +87,24 @@
     document.getElementById("fallback").href = redirectUrl;
 
     // Tenter la redirection automatique
+    // On ouvre l'URL cible dans un nouvel onglet, puis on ferme cet onglet de redirection.
+    // (window.close() ne fonctionne que sur des fenêtres ouvertes par window.open(),
+    //  donc on ne tente pas de fermer si l'onglet a été ouvert manuellement.)
     try {
-        window.location.href = redirectUrl;
+        var newWin = window.open(redirectUrl, "_blank");
 
-        if (isEdge) {
-            // En mode IE Edge : ClickOnce se lance seul, fermer la fenêtre après 3s
-            setTimeout(function() { window.close(); }, 3000);
+        if (newWin) {
+            // Ouverture réussie : fermer cet onglet de redirection après 1s
+            document.getElementById("status").textContent = "Silae s'est ouvert. Fermeture de cet onglet…";
+            setTimeout(function() { window.close(); }, 1000);
         } else {
-            // Autres navigateurs : afficher le bouton fallback après 3s, fermer après 5s
-            setTimeout(function() { window.close(); }, 5000);
+            // Popup bloqué : rediriger dans l'onglet courant
+            document.getElementById("status").textContent = "Redirection en cours…";
+            window.location.href = redirectUrl;
+        }
+
+        // Bouton de secours si tout échoue
+        if (!isEdge) {
             setTimeout(function() {
                 document.getElementById("spinner").style.display = "none";
                 document.getElementById("status").style.display = "none";
