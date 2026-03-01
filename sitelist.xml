@@ -1,0 +1,7 @@
+<site-list version="1">
+  <created>2026-03-01</created>
+  <site url="sadec-akelys.silae.fr">
+    <compat-mode>Default</compat-mode>
+    <open-in>IE11</open-in>
+  </site>
+</site-list>
