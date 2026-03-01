@@ -86,32 +86,20 @@
 
     document.getElementById("fallback").href = redirectUrl;
 
-    // Tenter la redirection automatique
-    // On ouvre l'URL cible dans un nouvel onglet, puis on ferme cet onglet de redirection.
-    // (window.close() ne fonctionne que sur des fenêtres ouvertes par window.open(),
-    //  donc on ne tente pas de fermer si l'onglet a été ouvert manuellement.)
+    // Rediriger dans l'onglet courant.
+    // window.close() est bloqué par tous les navigateurs modernes si la fenêtre
+    // n'a pas été ouverte par window.open() — on ne l'utilise donc pas.
+    // L'onglet courant devient simplement la page Silae après redirection.
     try {
-        var newWin = window.open(redirectUrl, "_blank");
+        window.location.href = redirectUrl;
 
-        if (newWin) {
-            // Ouverture réussie : fermer cet onglet de redirection après 1s
-            document.getElementById("status").textContent = "Silae s'est ouvert. Fermeture de cet onglet…";
-            setTimeout(function() { window.close(); }, 1000);
-        } else {
-            // Popup bloqué : rediriger dans l'onglet courant
-            document.getElementById("status").textContent = "Redirection en cours…";
-            window.location.href = redirectUrl;
-        }
-
-        // Bouton de secours si tout échoue
-        if (!isEdge) {
-            setTimeout(function() {
-                document.getElementById("spinner").style.display = "none";
-                document.getElementById("status").style.display = "none";
-                document.getElementById("fallback").style.display = "inline-block";
-                document.getElementById("error").style.display = "block";
-            }, 3000);
-        }
+        // Bouton de secours si la redirection ne se déclenche pas (ex: autre navigateur)
+        setTimeout(function() {
+            document.getElementById("spinner").style.display = "none";
+            document.getElementById("status").style.display = "none";
+            document.getElementById("fallback").style.display = "inline-block";
+            document.getElementById("error").style.display = "block";
+        }, 3000);
     } catch(e) {
         document.getElementById("spinner").style.display = "none";
         document.getElementById("fallback").style.display = "inline-block";
