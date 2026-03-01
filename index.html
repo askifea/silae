@@ -78,11 +78,17 @@
 
     // Afficher la destination
     document.getElementById("dest").textContent = targetUrl;
-    document.getElementById("fallback").href = edgeUrl;
+
+    // Si on est déjà dans Edge, rediriger directement sans passer par le protocole
+    // microsoft-edge: (qui déclencherait un dialogue de confirmation inutile)
+    const isEdge = /Edg\//.test(navigator.userAgent);
+    const redirectUrl = isEdge ? targetUrl : edgeUrl;
+
+    document.getElementById("fallback").href = redirectUrl;
 
     // Tenter la redirection automatique
     try {
-        window.location.href = edgeUrl;
+        window.location.href = redirectUrl;
 
         // Fermer l'onglet automatiquement après la redirection
         setTimeout(function() { window.close(); }, 5000);
