@@ -90,16 +90,19 @@
     try {
         window.location.href = redirectUrl;
 
-        // Fermer l'onglet automatiquement après la redirection
-        setTimeout(function() { window.close(); }, 5000);
-
-        // Si après 3s on est toujours là → afficher le bouton fallback
-        setTimeout(function() {
-            document.getElementById("spinner").style.display = "none";
-            document.getElementById("status").style.display = "none";
-            document.getElementById("fallback").style.display = "inline-block";
-            document.getElementById("error").style.display = "block";
-        }, 3000);
+        if (isEdge) {
+            // En mode IE Edge : ClickOnce se lance seul, fermer la fenêtre après 3s
+            setTimeout(function() { window.close(); }, 3000);
+        } else {
+            // Autres navigateurs : afficher le bouton fallback après 3s, fermer après 5s
+            setTimeout(function() { window.close(); }, 5000);
+            setTimeout(function() {
+                document.getElementById("spinner").style.display = "none";
+                document.getElementById("status").style.display = "none";
+                document.getElementById("fallback").style.display = "inline-block";
+                document.getElementById("error").style.display = "block";
+            }, 3000);
+        }
     } catch(e) {
         document.getElementById("spinner").style.display = "none";
         document.getElementById("fallback").style.display = "inline-block";
